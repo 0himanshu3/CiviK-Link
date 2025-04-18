@@ -31,8 +31,18 @@ const App = () => {
         <Route path="/otp-verification/:email" element={<OTP />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
         <Route path="/create" element={<PostIssue />} />
-       
+      
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
+      
+        <Route path="/dashboard" element={<UDashBoard />}>
+          <Route path="donations" element={<Donations />} />
+        </Route>
 
+        <Route path="/ngo-dashboard" element={<NGODashboard />}>
+          <Route index element={<NGODashh />} />
+          <Route path="donations" element={<NGODonations />} />
+        </Route>
       </Routes>
       <ToastContainer />
     </Router>
