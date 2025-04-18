@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
-import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle, Calendar } from 'lucide-react';
+import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle } from 'lucide-react';
 
 export default function UDashBoard() {
   const dispatch = useDispatch();
@@ -10,16 +10,14 @@ export default function UDashBoard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
-  // Add "My Events" to the sections array
-  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard', 'Donations', 'PostIssue', 'My Events'];
+  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard','Donations','PostIssue'];
 
   const sectionIcons = {
     'Created Issues': <ClipboardList size={18} />, 
     'Volunteering Oppurtunities': <Heart size={18} />, 
     'User Dashboard': <User size={18} />, 
     'Donations': <Heart size={18} />, 
-    'PostIssue': <PlusCircle size={18} />,
-    'My Events': <Calendar size={18} />
+    'PostIssue': <PlusCircle size={18} />
   };
 
   const handleLogout = () => {
@@ -27,12 +25,11 @@ export default function UDashBoard() {
     navigate("/login");
   };
   
+
   const handleSectionClick = (section) => {
     let slug;
     if (section === 'Donations') {
       slug = 'donations';
-    } else if (section === 'My Events') {
-      slug = 'my-events';
     } else {
       slug = section.toLowerCase().replace(/\s+/g, '-');
     }
@@ -56,20 +53,13 @@ export default function UDashBoard() {
         }`}
       >
         <div className="flex items-center mb-8 pl-10">
-          <h2 className="text-2xl font-bold">Neighbour Net</h2>
+          <h2 className="text-2xl font-bold">Civic Link</h2>
         </div>
         <nav className="flex-1">
           <ul className="space-y-2">
             {sections.map((sec) => {
               // Determine if this section is active
-              let slug;
-              if (sec === 'Donations') {
-                slug = 'donations';
-              } else if (sec === 'My Events') {
-                slug = 'my-events';
-              } else {
-                slug = sec.toLowerCase().replace(/\s+/g, '-');
-              }
+              const slug = sec === 'Donations' ? 'donations' : sec.toLowerCase().replace(/\s+/g, '-');
               const isActive = window.location.pathname === `/dashboard/${slug}`;
               return (
                 <li key={sec}>
