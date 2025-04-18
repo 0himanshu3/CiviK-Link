@@ -4,6 +4,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 
+import NGODashh from './pages/NGODashh'
+
+import UDashBoard from './pages/UDashBoard'
+import UserDashboard from './pages/UserDashboard'
+import NGODashh from './pages/NGODashh'
+import NGODashboard from './pages/NGODashboard'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -32,7 +38,12 @@ const App = () => {
         <Route path="/password/reset/:token" element={<ResetPassword />} />
         <Route path="/create" element={<PostIssue />} />
        
-
+        <Route path="/dashboard" element={<UDashBoard />}>
+          <Route path="user-dashboard" element={<UserDashboard />} />
+        </Route>
+        <Route path="/ngo-dashboard" element={<NGODashboard />}>
+          <Route index element={<NGODashh />} />
+        </Route>
       </Routes>
       <ToastContainer />
     </Router>
