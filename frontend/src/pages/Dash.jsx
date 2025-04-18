@@ -38,7 +38,7 @@ export default function Dash() {
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <h2 className="text-2xl font-bold mb-8">Neighbour Net</h2>
+        <h2 className="text-2xl font-bold mb-8">Civik-Link</h2>
         <nav className="flex-1">
           <ul>
             {sections.map((sec) => (
