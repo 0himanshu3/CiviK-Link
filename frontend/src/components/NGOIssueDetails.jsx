@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CollaborationDropdown from './CollaborationDropdown';
 
 export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     const [issue, setIssue] = useState(initialIssue);
@@ -13,8 +14,6 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedVolunteer, setSelectedVolunteer] = useState(null);
     const [taskDescription, setTaskDescription] = useState("");
-
-    // New state for proof and updates modals
     const [showProofModal, setShowProofModal] = useState(false);
     const [selectedTaskForProof, setSelectedTaskForProof] = useState(null);
     const [showUpdatesModal, setShowUpdatesModal] = useState(false);
@@ -59,6 +58,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                 volunteerPositions,
                 ngoUsername: user.name,
                 ngoUserid: user._id,
+                isCollaborator: issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)
             });
 
             toast.success('Volunteer request submitted successfully!');
@@ -82,6 +82,10 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                 issueId: issue._id,
                 volunteerId: selectedVolunteer._id,
                 task: taskDescription,
+                assignedBy: {
+                    id: user._id,
+                    name: user.name
+                }
             });
             toast.success("Task assigned successfully!");
             setShowTaskModal(false);
@@ -127,6 +131,8 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
             await axios.post('http://localhost:3000/api/v1/issues/acceptTaskProof', {
                 issueId: issue._id,
                 taskId,
+                userId: user._id,
+                userName: user.name
             });
             toast.success('Task completion proof accepted.');
             setShowProofModal(false);
@@ -142,6 +148,8 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
             await axios.post('http://localhost:3000/api/v1/issues/rejectTaskProof', {
                 issueId: issue._id,
                 taskId,
+                userId: user._id,
+                userName: user.name
             });
             toast.success('Task completion proof rejected.');
             setShowProofModal(false);
@@ -164,25 +172,27 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
-                <h1 className="text-3xl font-bold text-blue-700 mb-4">{issue.title}</h1>
+        <div className="container mx-auto px-4 py-8">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">{issue.title}</h1>
+                        <div className="flex items-center space-x-4">
+                            <span className={`px-3 py-1 rounded-full text-sm ${
+                                issue.status === 'Open' && !issue.assignedTo ? 'bg-green-100 text-green-800' :
+                                issue.assignedTo || (issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)) ? 'bg-blue-100 text-blue-800' :
+                                'bg-gray-100 text-gray-800'
+                            }`}>
+                                {issue.assignedTo || (issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)) ? 'Claimed' : issue.status}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{ __html: issue.content }}></p>
 
                 <div className="mb-4">
                     <span className="font-semibold text-gray-800">Location:</span> {issue.issueLocation}
-                </div>
-
-                <div className="mb-4">
-                    <span className="font-semibold text-gray-800">Status:</span>{' '}
-                    <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${issue.status === 'Open'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : issue.status === 'Assigned'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-green-100 text-green-700'
-                        }`}>
-                        {issue.status}
-                    </span>
                 </div>
 
                 {issue.images && issue.images.length > 0 && (
@@ -199,6 +209,32 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                         </div>
                     </div>
                 )}
+
+                {issue.assignedTo || (issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)) ? (
+                    <div className="mb-6">
+                        <CollaborationDropdown
+                            issueId={issue._id}
+                            assignedNgoId={user._id}
+                        />
+                        {issue.collaborators && issue.collaborators.length > 0 && (
+                            <div className="mt-4">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-2">Collaborators</h3>
+                                <div className="space-y-2">
+                                    {issue.collaborators.map((collaborator, index) => (
+                                        <div key={index} className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg">
+                                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <span className="text-blue-600 font-medium">
+                                                    {collaborator.name.charAt(0).toUpperCase()}
+                                                </span>
+                                            </div>
+                                            <span className="text-gray-700">{collaborator.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : null}
 
                 {issue.volunteerPositions && issue.volunteerPositions.length > 0 && (
                     <div className="mb-6">
@@ -224,42 +260,42 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                                                     Assign Task
                                                 </button>
                                             </div>
-                                            {volunteer.tasks && volunteer.tasks.length > 0 ? (
-                                                <div className="mt-2 space-y-2">
-                                                    {volunteer.tasks.map((task, taskIdx) => (
-                                                        <div key={taskIdx} className="bg-white p-2 rounded shadow text-sm">
-                                                            <p className="text-gray-800"><span className="font-medium">Task:</span> {task.description}</p>
-                                                            <p className="text-gray-600"><span className="font-medium">Status:</span> {task.status}</p>
-                                                            {task.status === "proof submitted" && (
-                                                                <div className="flex gap-2 mt-2">
-                                                                    <button
-                                                                        className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                                                                        onClick={() => openProofModal(task)}
-                                                                    >
-                                                                        View Task Completion Proof
-                                                                    </button>
-                                                                    <button
-                                                                        className="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600"
-                                                                        onClick={() => openUpdatesModal(task)}
-                                                                    >
-                                                                        View Task Updates
-                                                                    </button>
+                                                    {volunteer.tasks && volunteer.tasks.length > 0 ? (
+                                                        <div className="mt-2 space-y-2">
+                                                            {volunteer.tasks.map((task, taskIdx) => (
+                                                                <div key={taskIdx} className="bg-white p-2 rounded shadow text-sm">
+                                                                    <p className="text-gray-800"><span className="font-medium">Task:</span> {task.description}</p>
+                                                                    <p className="text-gray-600"><span className="font-medium">Status:</span> {task.status}</p>
+                                                                    {task.status === "proof submitted" && (
+                                                                        <div className="flex gap-2 mt-2">
+                                                                            <button
+                                                                                className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+                                                                                onClick={() => openProofModal(task)}
+                                                                            >
+                                                                                View Task Completion Proof
+                                                                            </button>
+                                                                            <button
+                                                                                className="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600"
+                                                                                onClick={() => openUpdatesModal(task)}
+                                                                            >
+                                                                                View Task Updates
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                    {task.status !== "proof submitted" && (
+                                                                        <button
+                                                                            className="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 mt-2"
+                                                                            onClick={() => openUpdatesModal(task)}
+                                                                        >
+                                                                            View Task Updates
+                                                                        </button>
+                                                                    )}
                                                                 </div>
-                                                            )}
-                                                            {task.status !== "proof submitted" && (
-                                                                <button
-                                                                    className="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 mt-2"
-                                                                    onClick={() => openUpdatesModal(task)}
-                                                                >
-                                                                    View Task Updates
-                                                                </button>
-                                                            )}
+                                                            ))}
                                                         </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className="text-sm text-gray-500 mt-1">No tasks assigned yet.</p>
-                                            )}
+                                                    ) : (
+                                                        <p className="text-sm text-gray-500 mt-1">No tasks assigned yet.</p>
+                                                    )}
                                         </div>
                                     ))}
                                 </div>
@@ -268,7 +304,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                     </div>
                 )}
 
-                {issue.status === 'Assigned' && (
+                {issue.status === 'Assigned' || (issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)) ? (
                     <div className="mb-6">
                         <button
                             onClick={() => setShowVolunteerModal(true)}
@@ -277,16 +313,18 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                             Request for Volunteers
                         </button>
                     </div>
-                )}
+                ) : null}
 
-                {issue.status === 'Assigned' && issue.assignedTo === user.name && (
+                {issue.status === 'Assigned' || (issue.collaborators && issue.collaborators.some(collab => collab.id === user._id)) ? (
                     <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                        <button
-                            onClick={handleDisclaimIssue}
-                            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg shadow"
-                        >
-                            Disclaim Issue
-                        </button>
+                        {issue.assignedTo === user.name && (
+                            <button
+                                onClick={handleDisclaimIssue}
+                                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg shadow"
+                            >
+                                Disclaim Issue
+                            </button>
+                        )}
                         <button
                             onClick={handleMarkAsCompleted}
                             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-lg shadow"
@@ -294,7 +332,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                             Mark as Completed
                         </button>
                     </div>
-                )}
+                ) : null}
             </div>
 
             {/* Volunteer Modal */}
@@ -442,7 +480,6 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
             )}
 
             {/* Task Updates Modal */}
-            {/* Task Updates Modal */}
             {showUpdatesModal && selectedTaskForUpdates && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md relative shadow-lg">
@@ -475,7 +512,6 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
