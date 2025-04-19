@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
-import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle, Calendar } from 'lucide-react';
+import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle, Calendar, Bell } from 'lucide-react';
 
 export default function UDashBoard() {
   const dispatch = useDispatch();
@@ -10,8 +10,8 @@ export default function UDashBoard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
-  // Add "My Events" to the sections array
-  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard', 'Donations', 'PostIssue', 'My Events'];
+  // Add "My Events" and "Notifications" to the sections array
+  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard', 'Donations', 'PostIssue', 'My Events', 'Notifications'];
 
   const sectionIcons = {
     'Created Issues': <ClipboardList size={18} />, 
@@ -19,7 +19,8 @@ export default function UDashBoard() {
     'User Dashboard': <User size={18} />, 
     'Donations': <Heart size={18} />, 
     'PostIssue': <PlusCircle size={18} />,
-    'My Events': <Calendar size={18} />
+    'My Events': <Calendar size={18} />,
+    'Notifications': <Bell size={18} />
   };
 
   const handleLogout = () => {
@@ -33,6 +34,8 @@ export default function UDashBoard() {
       slug = 'donations';
     } else if (section === 'My Events') {
       slug = 'my-events';
+    } else if (section === 'Notifications') {
+      slug = 'notifications';
     } else {
       slug = section.toLowerCase().replace(/\s+/g, '-');
     }
@@ -67,6 +70,8 @@ export default function UDashBoard() {
                 slug = 'donations';
               } else if (sec === 'My Events') {
                 slug = 'my-events';
+              } else if (sec === 'Notifications') {
+                slug = 'notifications';
               } else {
                 slug = sec.toLowerCase().replace(/\s+/g, '-');
               }
