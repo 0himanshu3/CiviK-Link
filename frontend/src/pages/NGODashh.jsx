@@ -87,7 +87,8 @@ const NGODashh = () => {
         }
 
         // Calculate statistics
-        const completedIssues = claimedIssues.filter(issue => issue.status === 'Completed');
+        const flattenedIssues = claimedIssues.flat();
+        const completedIssues = flattenedIssues.filter(issue => issue.status === 'Completed');
         const onTimeCompletedIssues = completedIssues.filter(issue => {
           if (!issue.deadline) return false;
           const completionDate = new Date(issue.updatedAt);
@@ -95,7 +96,7 @@ const NGODashh = () => {
           return completionDate <= deadline;
         });
         // Get active volunteers (unique volunteers from all claimed issues)
-        const flattenedIssues = claimedIssues.flat();
+        
 
         // Initialize set
         const activeVolunteersSet = new Set();
