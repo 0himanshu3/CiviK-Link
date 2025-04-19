@@ -13,9 +13,28 @@ import jwt from "jsonwebtoken"
 export const register = async (req, res) => {
     try {
         const { name, email, password, role, location } = req.body;
+        let interests = req.body.interests;
 
         if (!name || !email || !password || !role || !location) {
             return res.status(400).json({ msg: "Please fill in all fields" });
+        }
+
+        // Handle interests array from FormData
+        if (role === 'NGO') {
+            // If interests is a string, try to parse it
+            if (typeof interests === 'string') {
+                try {
+                    interests = JSON.parse(interests);
+                } catch (e) {
+                    // If parsing fails, it might be a single value or array from FormData
+                    interests = Array.isArray(req.body.interests) ? req.body.interests : [req.body.interests];
+                }
+            }
+            
+            // Validate interests
+            if (!interests || !Array.isArray(interests) || interests.length === 0) {
+                return res.status(400).json({ msg: "NGO users must select at least one interest" });
+            }
         }
 
         const isAlreadyPresent = await User.findOne({ email, accountVerified: true });
@@ -29,13 +48,20 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await User.create({
+        const userData = {
             name,
             email,
             password: hashedPassword,
             role,
             location
-        });
+        };
+
+        // Add interests only for NGO users
+        if (role === 'NGO') {
+            userData.interests = interests;
+        }
+
+        const user = await User.create(userData);
 
         const verificationCode = await user.generateVerificationCode();
         await user.save();
@@ -163,7 +189,38 @@ export const login = async (req, res) => {
             return res.status(400).json({ msg: "Invalid password" });
         }
 
-        sendToken(user, 200, "User logged in successfully", res);
+        // Create user object for response
+        const userResponse = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            location: user.location
+        };
+
+        // Add interests only for NGO users
+        if (user.role === 'NGO') {
+            userResponse.interests = user.interests;
+        }
+
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "User logged in successfully",
+            user: userResponse
+        });
 
     } catch (error) {
         console.log(error.message);

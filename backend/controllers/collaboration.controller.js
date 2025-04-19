@@ -194,4 +194,38 @@ export const respondToRequest = async (req, res) => {
             error: error.message
         });
     }
+};
+
+// Get potential collaborators based on interests matching with issue tags
+export const getPotentialCollaborators = async (req, res) => {
+    try {
+        const { issueId } = req.params;
+        
+        // Get the issue to access its tags
+        const issue = await Issue.findById(issueId);
+        if (!issue) {
+            return res.status(404).json({
+                success: false,
+                message: 'Issue not found'
+            });
+        }
+
+        // Find NGOs whose interests match with the issue tags
+        const potentialCollaborators = await User.find({
+            role: 'NGO',
+            interests: { $in: issue.tags }
+        }).select('name email interests');
+
+        return res.status(200).json({
+            success: true,
+            data: potentialCollaborators
+        });
+    } catch (error) {
+        console.error('Error in getPotentialCollaborators:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch potential collaborators',
+            error: error.message
+        });
+    }
 }; 
