@@ -1,8 +1,8 @@
-// import { Notification } from "../models/notification.model.js";
+import { Notification } from "../models/notification.model.js";
 // import { User } from "../models/user.model.js";
 // import Issue from "../models/issue.model.js";
 // import Job from "../models/job.model.js";
-// import { sendEmail } from "../utils/sendEmail.js";
+import { sendEmail } from "../utils/sendEmail.js";
 // import { io } from "../server.js";
 
 // //Notify when issue is picked up by an NGO
@@ -156,31 +156,38 @@
 //   }
 // };
 
-// export const getAllNotifications = async (req, res, next) => {
-//   try {
-//     const userId = req.user._id;
-//     const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
-//     return res.status(200).json(new ApiResponse(200, notifications, "Notifications fetched successfully"));
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const getAllNotifications = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const notifications = await Notification.find({ userId })
+      .sort({ createdAt: -1 });
+    return res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return res.status(500).json({ error: "Error fetching notifications" });
+  }
+};
 
-// export const markNotificationAsRead = async (req, res, next) => {
-//   try {
-//     const updatedNotification = await Notification.findByIdAndUpdate(
-//       req.params.notificationId,
-//       { isRead: true },
-//       { new: true }
-//     );
-//     if (!updatedNotification) {
-//       return next(new ApiError(404, "Notification not found"));
-//     }
-//     return res.status(200).json(new ApiResponse(200, updatedNotification, "Notification updated successfully"));
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const markNotificationAsRead = async (req, res) => {
+  try {
+    const { notificationId } = req.params;
+    const notification = await Notification.findByIdAndUpdate(
+      notificationId,
+      { isRead: true },
+      { new: true }
+    );
+    
+    if (!notification) {
+      return res.status(404).json({ error: "Notification not found" });
+    }
+    
+    return res.status(200).json(notification);
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    return res.status(500).json({ error: "Error marking notification as read" });
+  }
+};
 
 // export const deleteNotification = async (req, res, next) => {
 //   try {

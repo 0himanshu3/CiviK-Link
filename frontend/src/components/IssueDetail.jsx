@@ -14,7 +14,6 @@ export default function IssueDetailsPage({ issue: initialIssue }) {
   const { user } = useSelector((state) => state.auth);
   const [currentIndex, setCurrentIndex] = useState(0);
   console.log(issue);
-  
 
   const handleSubmit = async () => {
     let currentErrors = {};

@@ -15,6 +15,7 @@ import NGODashboard from './pages/NGODashboard'
 import Dash from './pages/Dash'
 import NGODashh from './pages/NGODashh'
 import CollaborationChat from './pages/CollaborationChat'
+import Notifications from './pages/Notifications'
 
 import UDashBoard from './pages/UDashBoard'
 import UserDashboard from './pages/UserDashboard'
@@ -73,6 +74,7 @@ const App = () => {
           <Route path="user-dashboard" element={<UserDashboard />} />
           <Route path="donations" element={<Donations />} />
           <Route path="postissue" element={<PostIssue />} />
+          <Route path="notifications" element={<Notifications />} />
           {/* User Event Routes */}
           <Route path="my-events" element={<RegisteredEvents />} />
         </Route>
