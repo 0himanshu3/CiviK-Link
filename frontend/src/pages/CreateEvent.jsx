@@ -205,44 +205,51 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
-      <div className="max-w-3xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Create New Event</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="title" className="block font-medium mb-1">Title</label>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-blue-600 py-6 px-8">
+          <h1 className="text-3xl font-bold text-white text-center">Create New Event</h1>
+          <p className="text-blue-100 text-center mt-2">Fill in the details to create your event</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {/* Title Section */}
+          <div className="space-y-2">
+            <label htmlFor="title" className="text-lg font-semibold text-gray-700 block">
+              Event Title
+            </label>
             <input
               id="title"
               type="text"
-              className="w-full border border-gray-300 rounded p-2"
-              placeholder="Event title"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              placeholder="Enter a descriptive title for your event"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
           </div>
 
-          {/* Category Dropdown */}
-          <div className="relative">
-            <label className="block font-medium mb-1">Category</label>
+          {/* Category Section */}
+          <div className="space-y-2 relative">
+            <label className="text-lg font-semibold text-gray-700 block">
+              Event Category
+            </label>
             <div
               onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-              className="w-full border border-gray-300 rounded p-2 flex items-center justify-between cursor-pointer"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 flex items-center justify-between cursor-pointer hover:border-blue-500 transition-all"
             >
-              {formData.category ? (
-                <span>{formData.category}</span>
-              ) : (
-                <span className="text-gray-500">Select category...</span>
-              )}
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <span className={formData.category ? "text-gray-900" : "text-gray-500"}>
+                {formData.category || "Select category..."}
+              </span>
+              <svg className={`w-5 h-5 text-gray-400 transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`} 
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
             {showCategoryDropdown && (
-              <div
-                ref={categoryDropdownRef}
-                className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto"
-              >
+              <div ref={categoryDropdownRef} 
+                   className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
                 {eventCategories.map((category) => (
                   <div
                     key={category}
@@ -250,7 +257,7 @@ export default function CreateEvent() {
                       setFormData({ ...formData, category });
                       setShowCategoryDropdown(false);
                     }}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors"
                   >
                     {category}
                   </div>
@@ -259,243 +266,303 @@ export default function CreateEvent() {
             )}
           </div>
 
-          <div>
-            <label className="block font-medium mb-1">Description</label>
-            <ReactQuill
-              theme="snow"
-              value={formData.description}
-              onChange={handleQuillChange}
-              placeholder="Describe the event in detail..."
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, false] }],
-                  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-                  ['link', 'image'],
-                  ['clean'],
-                ],
-              }}
-              formats={[
-                'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
-                'list', 'bullet', 'indent', 'link', 'image',
-              ]}
-              className="bg-white"
-            />
+          {/* Description Section */}
+          <div className="space-y-2">
+            <label className="text-lg font-semibold text-gray-700 block">
+              Event Description
+            </label>
+            <div className="rounded-lg overflow-hidden border border-gray-300">
+              <ReactQuill
+                theme="snow"
+                value={formData.description}
+                onChange={handleQuillChange}
+                placeholder="Describe your event in detail..."
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, false] }],
+                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                    [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+                    ['link'],
+                    ['clean'],
+                  ],
+                }}
+                className="bg-white h-48"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block font-medium mb-1">Location / Address</label>
-            <LocationPicker
-              eventLocation={formData.eventLocation}
-              setEventLocation={(loc) => setFormData({ ...formData, eventLocation: loc })}
-            />
+          {/* Location Section */}
+          <div className="space-y-2">
+            <label className="text-lg font-semibold text-gray-700 block">
+              Event Location
+            </label>
+            <div className="rounded-lg overflow-hidden border border-gray-300">
+              <LocationPicker
+                eventLocation={formData.eventLocation}
+                setEventLocation={(loc) => setFormData({ ...formData, eventLocation: loc })}
+              />
+            </div>
           </div>
 
-          {/* Date Pickers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-medium mb-1">Start Date</label>
+          {/* Date Selection Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-lg font-semibold text-gray-700 block">
+                Start Date & Time
+              </label>
               <DatePicker
                 selected={formData.eventStartDate}
                 onChange={(date) => setFormData({ ...formData, eventStartDate: date })}
                 showTimeSelect
                 dateFormat="MMMM d, yyyy h:mm aa"
                 minDate={new Date()}
-                className="w-full border border-gray-300 rounded p-2"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholderText="Select start date and time"
                 required
               />
             </div>
-            <div>
-              <label className="block font-medium mb-1">End Date</label>
+            <div className="space-y-2">
+              <label className="text-lg font-semibold text-gray-700 block">
+                End Date & Time
+              </label>
               <DatePicker
                 selected={formData.eventEndDate}
                 onChange={(date) => setFormData({ ...formData, eventEndDate: date })}
                 showTimeSelect
                 dateFormat="MMMM d, yyyy h:mm aa"
                 minDate={formData.eventStartDate || new Date()}
-                className="w-full border border-gray-300 rounded p-2"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholderText="Select end date and time"
                 required
               />
             </div>
           </div>
 
-          {/* Volunteer Positions */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block font-medium">Volunteer Positions</label>
+          {/* Volunteer Positions Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-lg font-semibold text-gray-700">
+                Volunteer Positions
+              </label>
               <button
                 type="button"
                 onClick={addPositionField}
-                className="bg-green-600 text-white px-3 py-1 text-sm rounded hover:bg-green-700"
+                className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
-                + Add Position
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Position
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {volunteerPositions.map((position, index) => (
-                <div key={index} className="flex items-center gap-2 p-3 border border-gray-200 rounded bg-gray-50">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={position.position}
-                      onChange={(e) => handlePositionChange(index, "position", e.target.value)}
-                      placeholder="Position title"
-                      className="w-full border border-gray-300 rounded p-2 mb-2"
-                      required
-                    />
-                    <input
-                      type="number"
-                      value={position.slots}
-                      onChange={(e) => handlePositionChange(index, "slots", e.target.value)}
-                      placeholder="Number of slots"
-                      className="w-full border border-gray-300 rounded p-2"
-                      min="1"
-                      required
-                    />
+                <div key={index} 
+                     className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input
+                        type="text"
+                        value={position.position}
+                        onChange={(e) => handlePositionChange(index, "position", e.target.value)}
+                        placeholder="Position title"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                      <input
+                        type="number"
+                        value={position.slots}
+                        onChange={(e) => handlePositionChange(index, "slots", e.target.value)}
+                        placeholder="Number of slots"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        min="1"
+                        required
+                      />
+                    </div>
+                    {volunteerPositions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removePositionField(index)}
+                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
-                  {volunteerPositions.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removePositionField(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Image Upload Section */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <label className="block font-medium">Images</label>
-              <button
-                type="button"
-                onClick={() => imageInputRef.current.click()}
-                className="bg-blue-600 text-white px-4 py-1.5 text-sm rounded hover:bg-blue-700"
-                disabled={imageUploading}
-              >
-                {imageUploading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin h-4 w-4 mr-1" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                    </svg>
-                    Uploading...
-                  </span>
-                ) : (
-                  'Upload Images'
-                )}
-              </button>
-              <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                hidden
-                onChange={handleImageUpload}
-              />
+          {/* Media Upload Sections */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Images Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-lg font-semibold text-gray-700">Images</label>
+                <button
+                  type="button"
+                  onClick={() => imageInputRef.current.click()}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg transition-colors ${
+                    imageUploading 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                  disabled={imageUploading}
+                >
+                  {imageUploading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Upload Images
+                    </>
+                  )}
+                </button>
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  hidden
+                  onChange={handleImageUpload}
+                />
+              </div>
+              {images.length > 0 && (
+                <div className="grid grid-cols-3 gap-3">
+                  {images.map((img, idx) => (
+                    <div key={idx} className="relative group aspect-square">
+                      <img
+                        src={img.url}
+                        alt={`uploaded-${idx}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(idx)}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {images.length > 0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                {images.map((img, idx) => (
-                  <div
-                    key={idx}
-                    className="relative w-20 h-20 rounded overflow-hidden border border-gray-300 shadow-sm group"
-                  >
-                    <img
-                      src={img.url}
-                      alt={`uploaded-${idx}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            {/* Videos Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-lg font-semibold text-gray-700">Videos</label>
+                <button
+                  type="button"
+                  onClick={() => videoInputRef.current.click()}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg transition-colors ${
+                    videoUploading 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                  disabled={videoUploading}
+                >
+                  {videoUploading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                       </svg>
-                    </button>
-                  </div>
-                ))}
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Upload Videos
+                    </>
+                  )}
+                </button>
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  multiple
+                  hidden
+                  onChange={handleVideoUpload}
+                />
               </div>
-            )}
-          </div>
-
-          {/* Video Upload Section */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-2">
-              <label className="block font-medium">Videos</label>
-              <button
-                type="button"
-                onClick={() => videoInputRef.current.click()}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                disabled={videoUploading}
-              >
-                {videoUploading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                    </svg>
-                    Uploading...
-                  </span>
-                ) : (
-                  'Upload Videos'
-                )}
-              </button>
-              <input
-                ref={videoInputRef}
-                type="file"
-                accept="video/*"
-                multiple
-                hidden
-                onChange={handleVideoUpload}
-              />
+              {videos.length > 0 && (
+                <div className="space-y-2">
+                  {videos.map((video, idx) => (
+                    <div key={idx} 
+                         className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all">
+                      <a href={video.url} 
+                         target="_blank" 
+                         rel="noopener noreferrer" 
+                         className="text-blue-600 hover:text-blue-800 hover:underline truncate max-w-[80%]">
+                        {decodeURIComponent(video.url.split('/').pop().split('?')[0])}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveVideo(idx)}
+                        className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            {videos.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {videos.map((video, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-2 bg-gray-100 rounded shadow text-sm">
-                    <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      {decodeURIComponent(video.url.split('/').pop().split('?')[0])}
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveVideo(idx)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-2 px-4 rounded text-white font-semibold ${
-              isSubmitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {isSubmitting ? "Creating..." : "Create Event"}
-          </button>
+          {/* Submit Button */}
+          <div className="pt-6">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full py-3 px-4 rounded-lg text-white font-semibold text-lg transition-colors ${
+                isSubmitting 
+                  ? "bg-gray-400 cursor-not-allowed" 
+                  : "bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl"
+              }`}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  Creating Event...
+                </span>
+              ) : (
+                "Create Event"
+              )}
+            </button>
+          </div>
 
+          {/* Error Message */}
           {publishError && (
-            <div className="bg-red-100 text-red-700 p-3 rounded mt-2 text-center">
-              {publishError}
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-red-800">{publishError}</span>
+              </div>
             </div>
           )}
         </form>
