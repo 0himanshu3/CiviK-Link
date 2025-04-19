@@ -109,11 +109,6 @@ export default function UDashBoard() {
 
       {/* Main content area for nested pages */}
       <main className={`flex-1 bg-gray-100 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome to Civik Link!</h1>
-          <p className="text-gray-600 mt-2">Your one-stop platform to raise issues, volunteer for causes, and make a difference in your neighborhood.</p>
-        </div>
-
         <Outlet />
       </main>
     </div>

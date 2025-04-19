@@ -83,7 +83,7 @@ export default function CreatedEvents() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="p-2 py-0">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Your Created Events</h2>
         <Link

@@ -205,7 +205,7 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Header Section */}
         <div className="bg-blue-600 py-6 px-8">
@@ -292,11 +292,11 @@ export default function CreateEvent() {
           </div>
 
           {/* Location Section */}
-          <div className="space-y-2">
+          <div className="">
             <label className="text-lg font-semibold text-gray-700 block">
               Event Location
             </label>
-            <div className="rounded-lg overflow-hidden border border-gray-300">
+            <div className="rounded-lg overflow-hidden">
               <LocationPicker
                 eventLocation={formData.eventLocation}
                 setEventLocation={(loc) => setFormData({ ...formData, eventLocation: loc })}
@@ -305,7 +305,7 @@ export default function CreateEvent() {
           </div>
 
           {/* Date Selection Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-15">
             <div className="space-y-2">
               <label className="text-lg font-semibold text-gray-700 block">
                 Start Date & Time
@@ -339,7 +339,7 @@ export default function CreateEvent() {
           </div>
 
           {/* Volunteer Positions Section */}
-          <div className="space-y-4">
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
               <label className="text-lg font-semibold text-gray-700">
                 Volunteer Positions
