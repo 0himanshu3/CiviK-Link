@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const authSlice = createSlice({
@@ -46,10 +46,11 @@ const authSlice = createSlice({
         },
         loginSuccess(state, action) {
             state.loading = false;
-            state.message = action.payload.message;
             state.isAuthenticated = true;
             state.user = action.payload.user;
-            // Store user data in localStorage
+            state.message = action.payload.message;
+            state.error = null;
+            localStorage.setItem('userRole', action.payload.user.role);
             localStorage.setItem('user', JSON.stringify(action.payload.user));
         },
         loginFailed(state, action) {
@@ -162,30 +163,24 @@ export const otpVerification = (email, otp) => async (dispatch) => {
         });
 };
 
-export const login = (data) => async (dispatch) => {
-    dispatch(authSlice.actions.loginRequest());
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
-        const response = await axios.post(
-            "http://localhost:3000/api/v1/auth/login", 
-            data, 
-            {
-                withCredentials: true,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        dispatch(authSlice.actions.loginSuccess(response.data));
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/v1/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+      
+      dispatch(authSlice.actions.loginSuccess(response.data));
+      
+      return response.data;
     } catch (error) {
-        console.error("Login error:", error.response?.data);
-        // Check if the error message indicates user not found
-        if (error.response?.data?.msg === "User not found") {
-            window.location.href = "/register";
-            return;
-        }
-        dispatch(authSlice.actions.loginFailed(error.response?.data?.msg || "Login failed"));
+      return rejectWithValue(error.response?.data || { message: 'Login failed' });
     }
-};
+  }
+);
 
 export const logout = () => async (dispatch) => {
     try {

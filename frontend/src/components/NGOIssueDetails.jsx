@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CollaborationDropdown from './CollaborationDropdown';
 
 export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     const [issue, setIssue] = useState(initialIssue);
@@ -165,27 +164,25 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-800 mb-2">{issue.title}</h1>
-                        <div className="flex items-center space-x-4">
-                            <span className={`px-3 py-1 rounded-full text-sm ${
-                                issue.status === 'Open' && !issue.assignedTo ? 'bg-green-100 text-green-800' :
-                                issue.assignedTo ? 'bg-blue-100 text-blue-800' :
-                                'bg-gray-100 text-gray-800'
-                            }`}>
-                                {issue.assignedTo ? 'Assigned' : issue.status}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
+        <div className="min-h-screen bg-gray-50 p-6">
+            <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
+                <h1 className="text-3xl font-bold text-blue-700 mb-4">{issue.title}</h1>
                 <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{ __html: issue.content }}></p>
 
                 <div className="mb-4">
                     <span className="font-semibold text-gray-800">Location:</span> {issue.issueLocation}
+                </div>
+
+                <div className="mb-4">
+                    <span className="font-semibold text-gray-800">Status:</span>{' '}
+                    <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${issue.status === 'Open'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : issue.status === 'Assigned'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-green-100 text-green-700'
+                        }`}>
+                        {issue.status}
+                    </span>
                 </div>
 
                 {issue.images && issue.images.length > 0 && (
@@ -200,15 +197,6 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                             />
                             <p className="text-sm text-gray-600 mt-1 text-center">{issue.images[0]?.caption}</p>
                         </div>
-                    </div>
-                )}
-
-                {issue.assignedTo && (
-                    <div className="mb-6">
-                        <CollaborationDropdown
-                            issueId={issue._id}
-                            assignedNgoId={user._id}
-                        />
                     </div>
                 )}
 
@@ -454,6 +442,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
             )}
 
             {/* Task Updates Modal */}
+            {/* Task Updates Modal */}
             {showUpdatesModal && selectedTaskForUpdates && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md relative shadow-lg">
@@ -486,6 +475,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
                     </div>
                 </div>
             )}
+
         </div>
     );
 }

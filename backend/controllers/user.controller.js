@@ -3,8 +3,13 @@ import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js"
 import { sendEmail } from "../utils/sendEmail.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
+
+const { ObjectId } = mongoose.Types;
+import jwt from "jsonwebtoken"
+
 export const register = async (req, res) => {
     try {
         const { name, email, password, role, location } = req.body;
@@ -101,27 +106,64 @@ export const verifyOtp = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
+        console.log('Login request received:', req.body);
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({ msg: "Please fill in all fields" });
+        }
+        
+        // Check for admin credentials first
+        if (email === process.env.ADMIN_EMAIL) {
+            console.log('Admin email match detected');
+            if (password === process.env.ADMIN_PASSWORD) {
+                console.log('Admin password match detected, creating admin token');
+                const token = jwt.sign(
+                    { id: 'admin', role: 'admin' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1d' }
+                );
 
-    const {email,password} =req.body;
-    if(!email || !password){
-      return res.status(400).json({ msg: "Please fill in all fields" });
-    }
-    const user = await User.findOne({ email, accountVerified: true }).select("+password");
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    maxAge: 24 * 60 * 60 * 1000 // 1 day
+                });
 
-    if (!user) {
+                return res.status(200).json({
+                    success: true,
+                    message: 'Admin login successful',
+                    user: {
+                        id: 'admin',
+                        name: 'Admin',
+                        email: process.env.ADMIN_EMAIL,
+                        role: 'admin'
+                    }
+                });
+            } else {
+                console.log('Admin password incorrect');
+                return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+            }
+        }
+        
+        // If not admin, proceed with regular user login
+        console.log('Regular user login attempt');
+        const user = await User.findOne({ email, accountVerified: true }).select("+password");
 
-        return res.status(400).json({ msg: "User not found" });
-    }
+        if (!user) {
+            console.log('User not found');
+            return res.status(400).json({ msg: "User not found" });
+        }
 
-    const isPasswordMatched = await bcrypt.compare(password, user.password);
+        const isPasswordMatched = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordMatched) {
+        if (!isPasswordMatched) {
+            console.log('Invalid password');
+            return res.status(400).json({ msg: "Invalid password" });
+        }
 
-        return res.status(400).json({ msg: "Invalid password" });
-
-    }
-
-    sendToken(user, 200, "User logged in successfully", res);
+        sendToken(user, 200, "User logged in successfully", res);
 
     } catch (error) {
         console.log(error.message);
@@ -277,7 +319,7 @@ export const createTestNGO = async (req, res) => {
 export const getUserDetails = async (req, res) => {
     try {
       const userId = req.params.id;
-    
+      console.log(userId);
       if (!userId) {
         return res.status(400).json({
           success: false,

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { login, resetAuthSlice } from '../redux/slices/authSlice'
 import { Eye, EyeOff } from 'lucide-react'
+import { toast } from 'react-toastify'
 
 function Login() {
     const [email, setEmail] = useState("")
@@ -11,25 +12,49 @@ function Login() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const { loading, error, message, user, isAuthenticated } = useSelector(state => state.auth)
+    const { loading, error, user, isAuthenticated } = useSelector(state => state.auth)
+
+    const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
     const handleLogin = (e) => {
         e.preventDefault()
-        const data = {
-            email,
-            password
+        dispatch(login({ email, password }))
+    }
+
+    const handleAdminLogin = (e) => {
+        e.preventDefault();
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+            dispatch(login({ email, password }))
+                .unwrap()
+                .then((result) => {
+                    toast.success('Admin login successful!');
+                    setTimeout(() => {
+                        navigate('/admin/dashboard');
+                    }, 100);
+                })
+                .catch((error) => {
+                    toast.error(error.message || 'Login failed');
+                });
+        } else {
+            toast.error('Invalid admin credentials');
         }
-        dispatch(login(data))
     }
 
     useEffect(() => {
-        if (message) {
-            user?.role === 'Admin' ? navigate("/admin/dashboard") : navigate("/")
+        if (isAuthenticated && user) {
+            if (user.role === 'admin') {
+                navigate('/admin/dashboard');
+            } else if (user.role === 'NGO') {
+                navigate('/ngo-dashboard');
+            } else {
+                navigate('/dashboard/user-dashboard');
+            }
         }
         if (error) {
-            dispatch(resetAuthSlice())
+            dispatch(resetAuthSlice());
         }
-    }, [dispatch, isAuthenticated, error, loading])
+    }, [isAuthenticated, user, error, dispatch, navigate]);
 
     if (isAuthenticated) {
         return <Navigate to="/" />
@@ -80,8 +105,8 @@ function Login() {
                     </button>
                     <button
                         type="button"
-                        onClick={() => navigate("/admin/login")}
-                        className="w-full mt-3 border border-black text-black py-2 rounded-md hover:bg-black hover:text-white transition"
+                        onClick={handleAdminLogin}
+                        className="w-full mt-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
                     >
                         Admin Login
                     </button>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
-import { Menu, X, Home, ClipboardList, MessageSquare, CheckCircle, Heart, LogOut } from 'lucide-react';
+import { Menu, X, Home, ClipboardList, MessageSquare, CheckCircle, Heart, LogOut, Calendar, PlusCircle } from 'lucide-react';
 import { FaTrophy } from 'react-icons/fa';
 import NGODashh from './NGODashh';
 
@@ -15,23 +15,21 @@ const NGODashboard = () => {
   // Handle redirection on page refresh
   useEffect(() => {
     // Only redirect if we're not already on the main dashboard
-    if (location.pathname !== '/ngo-dashboard') {
+    if (location.pathname === '/ngo-dashboard') {
+      // This ensures we don't redirect away from sub-routes
       navigate('/ngo-dashboard');
     }
   }, []); // Empty dependency array means this only runs once on mount
 
-  // const sections = [
-  //   { name: 'Dashboard', icon: <Home size={18} />, path: '' },
-  //   { name: 'Requests', icon: <ClipboardList size={18} />, path: 'requests' },
-  //   { name: 'Query Section', icon: <MessageSquare size={18} />, path: 'query-section' },
-  //   { name: 'Claimed Issues', icon: <CheckCircle size={18} />, path: 'claimed-issues' },
-  //   { name: 'Donations', icon: <Heart size={18} />, path: 'donations' }
-  // ];
   const sections = [
     { name: 'Dashboard', icon: <Home size={18} />, path: '' },
     { name: 'Requests', icon: <ClipboardList size={18} />, path: 'requests' },
+    { name: 'Query Section', icon: <MessageSquare size={18} />, path: 'query-section' },
     { name: 'Claimed Issues', icon: <CheckCircle size={18} />, path: 'claimed-issues' },
-    { name: 'Donations', icon: <Heart size={18} />, path: 'donations' }
+    { name: 'Donations', icon: <Heart size={18} />, path: 'donations' },
+    // New event-related sections
+    { name: 'Create Event', icon: <PlusCircle size={18} />, path: 'create-event' },
+    { name: 'Created Events', icon: <Calendar size={18} />, path: 'created-events' }
   ];
   
   const handleSectionClick = (section) => {
@@ -66,10 +64,10 @@ const NGODashboard = () => {
         }`}
       >
         <div className="flex items-center mb-8 pl-10">
-          <h2 className="text-2xl font-bold">NeighBour Net</h2>
+          <h2 className="text-2xl font-bold">Civik-Link</h2>
         </div>
         
-        <nav className="flex-1">
+        <nav className="flex-1 overflow-y-auto">
           <ul className="space-y-2">
             {sections.map((section) => {
               const isActive = location.pathname === `/ngo-dashboard/${section.path}` || 

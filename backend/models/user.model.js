@@ -32,9 +32,6 @@ const userSchema= new mongoose.Schema({
                 type:mongoose.Schema.Types.ObjectId,
                 ref:"Issue"
             },
-            issueDate:{
-                type:Date
-            },
             tasks:[
                 {
                     taskId:{
