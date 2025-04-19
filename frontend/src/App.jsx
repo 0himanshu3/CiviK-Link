@@ -14,6 +14,7 @@ import ResetPassword from './pages/ResetPassword'
 import NGODashboard from './pages/NGODashboard'
 import Dash from './pages/Dash'
 import NGODashh from './pages/NGODashh'
+import CollaborationChat from './pages/CollaborationChat'
 
 import UDashBoard from './pages/UDashBoard'
 import UserDashboard from './pages/UserDashboard'
@@ -95,6 +96,7 @@ const App = () => {
         } />
 
         <Route path="/collaborated-issues" element={<CollaboratedIssuesPage />} />
+        <Route path="/collaboration-chat/:issueId" element={<CollaborationChat />} />
       </Routes>
       <ToastContainer />
     </Router>
