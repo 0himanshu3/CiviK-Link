@@ -132,7 +132,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     const handleAcceptProof = async (taskId) => {
         try {
             await axios.post('http://localhost:3000/api/v1/issues/acceptTaskProof', {
-                issueId: issue._id,
+                issue: issue,
                 taskId,
                 userId: user._id,
                 userName: user.name
@@ -149,7 +149,7 @@ export default function NGOIssueDetailsPage({ issue: initialIssue }) {
     const handleRejectProof = async (taskId) => {
         try {
             await axios.post('http://localhost:3000/api/v1/issues/rejectTaskProof', {
-                issueId: issue._id,
+                issue: issue,
                 taskId,
                 userId: user._id,
                 userName: user.name

@@ -7,6 +7,7 @@ import { User } from '../models/user.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import mongoose from "mongoose";
+import { Notification } from '../models/notification.model.js';
 
 //Create a new issue
 export const createIssue = async (req, res) => {
@@ -493,7 +494,7 @@ export const submitFeedback = async (req, res) => {
 };
 
 
-export const assignTask = async (req, res) => {
+export const assignTask = async (req, res) => { 
   const { issueId, volunteerId, task } = req.body;
 
   try {
@@ -510,13 +511,22 @@ export const assignTask = async (req, res) => {
       assignedTo: volunteerId,
       description: task,
     });
-     volunteer.Issues.forEach((issue) => {
+
+    // Create notification for the assigned volunteer
+    await Notification.create({
+      userId: volunteerId,
+      type: 'task-assigned',
+      message: `You have been assigned a new task: "${task}" for issue "${issue.title}"`,
+      eventSlug: issue.slug
+    });
+
+    volunteer.Issues.forEach((issue) => {
       if (issue.issueId.toString() === issueId) {
         issue.tasks.push(newTask._id);
       }
-    }
-  );
-  await volunteer.save();
+    });
+       
+    await volunteer.save();
     res.status(201).json({
       message: 'Task assigned successfully',
       task: newTask,
@@ -620,18 +630,21 @@ export const submitTaskProof = async (req, res) => {
 
 export const approveTaskProof = async (req, res) => {
   try {
-    const { taskId } = req.body;
+    const { taskId, issue, userId } = req.body;
 
-    // Find the task by ID
     const task = await Task.findById(taskId);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Approve the proof: mark task as completed
     task.status = 'completed';
-    // Optionally, you could leave the proof fields intact or clear them
-    // For example: task.proofSubmitted = true; (it should already be true)
+    await Notification.create({
+      userId: userId,
+      type: 'proof-accepted',
+      message: `your proof of the task: "${task}" for issue "${issue.title} was accepted!"`,
+      eventSlug: issue.slug
+    });
+
     await task.save();
 
     return res.status(200).json({
@@ -651,7 +664,7 @@ export const rejectTaskProof = async (req, res) => {
   try {
     console.log("here");
     
-    const { taskId } = req.body;
+    const { taskId, userId, issue } = req.body;
 
     // Find the task by ID
     const task = await Task.findById(taskId);
@@ -659,13 +672,19 @@ export const rejectTaskProof = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Reject the proof: reset proofSubmitted to false,
-    // clear the proofImages and proofMessage,
-    // and keep the task status as 'pending'
     task.proofSubmitted = false;
     task.proofImages = [];
     task.proofMessage = "";
-    task.status = 'pending'; // Ensuring the task remains pending
+    task.status = 'pending';
+
+    await Notification.create({
+      userId: userId,
+      type: 'proof-rejected',
+      message: `your proof of the task: "${task}" for issue "${issue.title} was rejected!"`,
+      eventSlug: issue.slug
+    });
+
+
     await task.save();
 
     return res.status(200).json({

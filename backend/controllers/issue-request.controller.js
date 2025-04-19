@@ -35,7 +35,7 @@ export const requestIssue = async (req, res) => {
     await issue.save(); 
 
     await Notification.create({
-      userId: issue.postedBy,
+      userId: issue.postedBy, 
       message: `Your issue "${issue.title}" has been claimed by NGO "${ngoUsername}".`,
       type: "issue-claimed",
       eventSlug: issue.slug
