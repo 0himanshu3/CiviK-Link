@@ -70,7 +70,7 @@ export default function CollaboratedIssuesPage() {
 
             <div className="flex justify-end">
               <button
-                onClick={() => navigate(`/issue/${issue._id}`)}
+                onClick={() => navigate(`/issues/${issue._id}`)}
                 className="group flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition transform hover:scale-105"
               >
                 <span>View Details</span>

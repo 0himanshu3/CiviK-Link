@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaTasks, FaMapMarkerAlt, FaCalendarAlt, FaArrowLeft, FaFilter, FaSearch, FaClock, FaUsers, FaCheckCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import CollaborationDropdown from '../components/CollaborationDropdown';
 
 const AssignedIssues = () => {
   const [assignedIssues, setAssignedIssues] = useState([]);
@@ -251,56 +252,50 @@ const AssignedIssues = () => {
             )}
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="font-semibold text-lg">{issue.title}</h3>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(issue.status)}`}>
+                <h3 className="text-xl font-semibold text-gray-800">{issue.title}</h3>
+                <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(issue.status)}`}>
                   {issue.status}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mb-4">{issue.description}</p>
               
               <div className="space-y-3 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaMapMarkerAlt className="mr-2 text-blue-500" />
+                <div className="flex items-center text-gray-600">
+                  <FaMapMarkerAlt className="mr-2" />
                   <span>{issue.location}</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaCalendarAlt className="mr-2 text-blue-500" />
-                  <span>Deadline: {issue.deadline}</span>
+                <div className="flex items-center text-gray-600">
+                  <FaCalendarAlt className="mr-2" />
+                  <span>Deadline: {new Date(issue.deadline).toLocaleDateString()}</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaUsers className="mr-2 text-blue-500" />
+                <div className="flex items-center text-gray-600">
+                  <FaUsers className="mr-2" />
                   <span>{issue.volunteers} Volunteers</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaCheckCircle className="mr-2 text-blue-500" />
-                  <span>{issue.tasksCompleted}/{issue.totalTasks} Tasks Completed</span>
                 </div>
               </div>
 
               <div className="mb-4">
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Progress</span>
-                  <span>{issue.progress}%</span>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm text-gray-600">Progress</span>
+                  <span className="text-sm text-gray-600">{issue.progress}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-500 rounded-full h-2 transition-all duration-300" 
+                  <div
+                    className="bg-blue-500 h-2 rounded-full"
                     style={{ width: `${issue.progress}%` }}
                   ></div>
                 </div>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(issue.priority)}`}>
+                <span className={`px-3 py-1 rounded-full text-sm ${getPriorityColor(issue.priority)}`}>
                   {issue.priority} priority
                 </span>
-                <Link 
-                  to={`/issues/${issue.id}`}
-                  className="inline-flex items-center text-blue-500 hover:text-blue-700 text-sm font-medium"
-                >
-                  View Details
-                  <FaArrowLeft className="ml-1 transform rotate-180" />
-                </Link>
+                {issue.status === 'in-progress' && (
+                  <CollaborationDropdown
+                    issueId={issue.id}
+                    assignedNgoId={issue.assignedTo}
+                  />
+                )}
               </div>
             </div>
           </div>

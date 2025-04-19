@@ -82,6 +82,17 @@ const IssueSchema = new mongoose.Schema(
       enum: ["Open", "Assigned", "Completed"],
       default: "Open",
     },
+    collaborators: [{
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      name: {
+        type: String,
+        required: true
+      }
+    }],
     upvoters: [
       {
         type: mongoose.Schema.ObjectId,
@@ -124,7 +135,7 @@ const IssueSchema = new mongoose.Schema(
         ],
       },
     ],
-    feedback: [feedbackSchema], // ✅ Added feedback here
+    feedback: [feedbackSchema],
   },
   { timestamps: true }
 );

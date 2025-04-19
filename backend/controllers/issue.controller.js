@@ -680,3 +680,27 @@ export const rejectTaskProof = async (req, res) => {
     });
   }
 };
+
+export const getCollaboratedIssues = async (req, res) => {
+  try {
+    const { ngoId } = req.params;
+
+    // Find all issues where the NGO is listed as a collaborator
+    const collaboratedIssues = await Issue.find({
+      'collaborators.id': ngoId
+    }).sort({ createdAt: -1 });
+   
+    res.status(200).json({
+      success: true,
+      collaboratedIssues
+    });
+  } catch (error) {
+    console.error('Error in getCollaboratedIssues:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching collaborated issues',
+      error: error.message
+    });
+  }
+};
+
