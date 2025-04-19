@@ -9,6 +9,7 @@ import issuerequestRouter from './routes/issue-request.js'
 import donationRoutes from './routes/donation.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
 import adminRoutes from './routes/admin.routes.js'
+import collaborationRoutes from './routes/collaboration.routes.js'
 import eventRoutes from './routes/event.route.js'
 
 export const app = express();
@@ -18,7 +19,7 @@ config({path:"./config/config.env"});
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
@@ -39,6 +40,7 @@ app.use("/api/v1/issues", issueRouter);
 app.use("/api/v1/donations", donationRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/collaboration', collaborationRoutes);
 app.use("/api/v1/events", eventRoutes);
 
 connectDB();

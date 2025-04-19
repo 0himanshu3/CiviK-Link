@@ -53,7 +53,7 @@ export default function UDashBoard() {
         }`}
       >
         <div className="flex items-center mb-8 pl-10">
-          <h2 className="text-2xl font-bold">Civic Link</h2>
+          <h2 className="text-2xl font-bold">Civik Link</h2>
         </div>
         <nav className="flex-1">
           <ul className="space-y-2">
