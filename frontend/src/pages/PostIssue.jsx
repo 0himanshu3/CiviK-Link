@@ -160,33 +160,36 @@ export default function PostIssue() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
-      <div className="max-w-3xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Post an Issue</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="bg-[#f5f7fa] min-h-screen py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-10 shadow-lg rounded-lg border border-gray-200">
+        <h1 className="text-3xl font-bold text-blue-700 text-center mb-8">Post an Issue</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
+  
+          {/* Title */}
           <div>
-            <label htmlFor="title" className="block font-medium mb-1">Title</label>
+            <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
             <input
               id="title"
               type="text"
-              className="w-full border border-gray-300 rounded p-2"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Issue title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
           </div>
-
-          {/* Tags Dropdown */}
+  
+          {/* Tags */}
           <div className="relative">
-            <label className="block font-medium mb-1">Tags</label>
+            <label className="block text-sm font-medium mb-1">Tags</label>
             <div
               onClick={() => setShowTagDropdown(!showTagDropdown)}
-              className="w-full border border-gray-300 rounded p-2 flex flex-wrap gap-2 cursor-pointer"
+              className="w-full border border-gray-300 rounded-md p-2 min-h-[42px] flex flex-wrap gap-2 cursor-pointer"
             >
               {formData.tags.length > 0 ? (
                 formData.tags.map((tag) => (
-                  <span key={tag} className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  <span key={tag} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-sm">
                     {tag}
                   </span>
                 ))
@@ -205,26 +208,23 @@ export default function PostIssue() {
                     onClick={() => toggleTag(tag)}
                     className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   >
-                    <input
-                      type="checkbox"
-                      checked={formData.tags.includes(tag)}
-                      readOnly
-                      className="mr-2"
-                    />
+                    <input type="checkbox" checked={formData.tags.includes(tag)} readOnly className="mr-2" />
                     <span>{tag}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
-
-          <div>
-            <label className="block font-medium mb-1">Description</label>
+  
+          {/* Description */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium mb-1">Description</label>
             <ReactQuill
               theme="snow"
               value={formData.content}
               onChange={handleQuillChange}
               placeholder="Describe the issue in detail..."
+              className="bg-white"
               modules={{
                 toolbar: [
                   [{ header: [1, 2, false] }],
@@ -238,39 +238,29 @@ export default function PostIssue() {
                 'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
                 'list', 'bullet', 'indent', 'link', 'image',
               ]}
-              className="bg-white"
             />
           </div>
-
+  
+          {/* Location */}
           <div>
-            <label className="block font-medium mb-1">Location / Address</label>
+            <label className="block text-sm font-medium mb-1">Location / Address</label>
             <LocationPicker
               eventLocation={formData.issueLocation}
               setEventLocation={(loc) => setFormData({ ...formData, issueLocation: loc })}
             />
           </div>
-
-          {/* Image Upload Section */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <label className="block font-medium">Images</label>
+  
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Images</label>
+            <div className="flex items-center gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => imageInputRef.current.click()}
                 className="bg-blue-600 text-white px-4 py-1.5 text-sm rounded hover:bg-blue-700"
                 disabled={imageUploading}
               >
-                {imageUploading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin h-4 w-4 mr-1" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                    </svg>
-                    Uploading...
-                  </span>
-                ) : (
-                  'Upload Images'
-                )}
+                {imageUploading ? 'Uploading...' : 'Upload Images'}
               </button>
               <input
                 ref={imageInputRef}
@@ -281,19 +271,14 @@ export default function PostIssue() {
                 onChange={handleImageUpload}
               />
             </div>
-
             {images.length > 0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap gap-2">
                 {images.map((img, idx) => (
                   <div
                     key={idx}
                     className="relative w-20 h-20 rounded overflow-hidden border border-gray-300 shadow-sm group"
                   >
-                    <img
-                      src={img.url}
-                      alt={`uploaded-${idx}`}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={img.url} alt={`uploaded-${idx}`} className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(idx)}
@@ -308,28 +293,18 @@ export default function PostIssue() {
               </div>
             )}
           </div>
-
-          {/* Video Upload Section */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-2">
-              <label className="block font-medium">Videos</label>
+  
+          {/* Video Upload */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Videos</label>
+            <div className="flex items-center gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => videoInputRef.current.click()}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-1.5 text-sm rounded hover:bg-blue-700"
                 disabled={videoUploading}
               >
-                {videoUploading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                    </svg>
-                    Uploading...
-                  </span>
-                ) : (
-                  'Upload Videos'
-                )}
+                {videoUploading ? 'Uploading...' : 'Upload Videos'}
               </button>
               <input
                 ref={videoInputRef}
@@ -341,7 +316,7 @@ export default function PostIssue() {
               />
             </div>
             {videos.length > 0 && (
-              <div className="mt-4 space-y-2">
+              <div className="space-y-2">
                 {videos.map((video, idx) => (
                   <div key={idx} className="flex items-center justify-between p-2 bg-gray-100 rounded shadow text-sm">
                     <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
@@ -361,17 +336,18 @@ export default function PostIssue() {
               </div>
             )}
           </div>
-
+  
+          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-2 px-4 rounded text-white font-semibold ${
+            className={`w-full py-2 px-4 rounded text-white font-semibold transition-colors ${
               isSubmitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {isSubmitting ? "Posting..." : "Post Issue"}
           </button>
-
+  
           {publishError && (
             <div className="bg-red-100 text-red-700 p-3 rounded mt-2 text-center">
               {publishError}
@@ -381,4 +357,5 @@ export default function PostIssue() {
       </div>
     </div>
   );
+  
 }
