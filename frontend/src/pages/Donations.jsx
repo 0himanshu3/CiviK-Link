@@ -21,7 +21,7 @@ const Donations = () => {
   const fetchNgos = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/api/v1/user/ngos', {
+      const response = await axios.get('http://localhost:3000/api/v1/auth/user/ngos', {
         withCredentials: true
       });
       setNgos(response.data.data || []);

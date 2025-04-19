@@ -8,7 +8,7 @@ const donationSchema = new mongoose.Schema(
       required: true,
     },
     ngoId: {
-      type: maongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },

@@ -20,10 +20,16 @@ const NGODashboard = () => {
     }
   }, []); // Empty dependency array means this only runs once on mount
 
+  // const sections = [
+  //   { name: 'Dashboard', icon: <Home size={18} />, path: '' },
+  //   { name: 'Requests', icon: <ClipboardList size={18} />, path: 'requests' },
+  //   { name: 'Query Section', icon: <MessageSquare size={18} />, path: 'query-section' },
+  //   { name: 'Claimed Issues', icon: <CheckCircle size={18} />, path: 'claimed-issues' },
+  //   { name: 'Donations', icon: <Heart size={18} />, path: 'donations' }
+  // ];
   const sections = [
     { name: 'Dashboard', icon: <Home size={18} />, path: '' },
     { name: 'Requests', icon: <ClipboardList size={18} />, path: 'requests' },
-    { name: 'Query Section', icon: <MessageSquare size={18} />, path: 'query-section' },
     { name: 'Claimed Issues', icon: <CheckCircle size={18} />, path: 'claimed-issues' },
     { name: 'Donations', icon: <Heart size={18} />, path: 'donations' }
   ];

@@ -7,7 +7,7 @@ import {
     register, 
     resetPassword, 
     verifyOtp,
-    getAllNGOs ,
+    getAllNGOs,
     getUserDetails,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -20,11 +20,11 @@ router.post("/verify-otp", verifyOtp);
 router.post("/login", login);
 router.get("/logout", isAuthenticated, logout);
 router.get("/profile", isAuthenticated, getUser);
-router.get("/:id",getUserDetails);
+router.get("/:id", getUserDetails);
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
 
 // NGO routes
-router.get('/ngos', isAuthenticated, getAllNGOs);
+router.get('/user/ngos', isAuthenticated, getAllNGOs);
 
 export default router;
