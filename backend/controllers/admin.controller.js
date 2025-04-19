@@ -96,8 +96,7 @@ export const getIssueDetails = async (req, res) => {
     if (!issue) {
       return res.status(404).json({ success: false, message: 'Issue not found' });
     }
-    
-    
+
     console.log('Issue postedBy:', issue.postedBy);
     
     const userwhoPosted = await User.findById(issue.postedBy).select('name email');
@@ -230,10 +229,17 @@ export const generateFeedbackReport = async (req, res) => {
 
     const report = response.data.choices[0].message.content;
     
+    console.log('====================================');
+    console.log('Raw AI Response:', report);
+    console.log('====================================');
+
     // Clean the response to ensure it's valid JSON
     const cleanReport = report.replace(/```json\n|\n```/g, '').trim();
     const reportJSON = JSON.parse(cleanReport);
     
+    console.log('====================================');
+    console.log('Parsed JSON:', reportJSON);
+    console.log('====================================');
 
     res.json({ success: true, report: reportJSON });
   } catch (error) {

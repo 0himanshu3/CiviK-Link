@@ -1,3 +1,5 @@
+// src/pages/NGODashh.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -75,7 +77,7 @@ const NGODashh = () => {
             const issueResponse = await fetch(`http://localhost:3000/api/v1/issues/getIssue/${issueId}`);
             const issueResult = await issueResponse.json();
             if (issueResult.success) {
-              claimedIssues.push(issueResult.data); 
+              claimedIssues.push(issueResult.data); // Add the issue to the claimedIssues array
             } else {
               console.error(`Failed to fetch issue with ID: ${issueId}`);
             }

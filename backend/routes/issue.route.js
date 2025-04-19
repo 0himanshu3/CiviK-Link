@@ -20,6 +20,7 @@ import {
   submitTaskProof,
   approveTaskProof,
   rejectTaskProof,
+  getCollaboratedIssues,
 } from "../controllers/issue.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
@@ -30,6 +31,7 @@ router.get("/getAll", getAllIssues);
 router.get("/users/:id",getIssueByUser);
 router.get("/getIssue/:id",getIssueThroughId);
 router.get("/requested/:id",getIssuesVolunteered);
+router.get("/collaborated/:ngoId", getCollaboratedIssues);
 router.post("/upvote/:issueId", isAuthenticated, upvoteIssue);
 router.post("/downvote/:issueId", isAuthenticated, downvoteIssue);
 router.get('/:id', getIssueById);
