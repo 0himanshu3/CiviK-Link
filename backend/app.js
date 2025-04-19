@@ -11,6 +11,7 @@ import paymentRoutes from './routes/payment.routes.js'
 import adminRoutes from './routes/admin.routes.js'
 import collaborationRoutes from './routes/collaboration.routes.js'
 import eventRoutes from './routes/event.route.js'
+import notificationRoutes from './routes/notification.routes.js'
 
 export const app = express();
 
@@ -42,5 +43,6 @@ app.use("/api/v1/payments", paymentRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/collaboration', collaborationRoutes);
 app.use("/api/v1/events", eventRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 
 connectDB();
