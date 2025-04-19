@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
-import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle, Calendar, Bell } from 'lucide-react';
+import { Menu, User, ClipboardList, Heart, LogOut, Home, PlusCircle, Calendar, Bell, Building2 } from 'lucide-react';
 
 export default function UDashBoard() {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ export default function UDashBoard() {
   const { user } = useSelector((state) => state.auth);
 
   // Add "My Events" and "Notifications" to the sections array
-  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard', 'Donations', 'PostIssue', 'My Events', 'Notifications'];
+  const sections = ['Created Issues', 'Volunteering Oppurtunities', 'User Dashboard', 'Donations', 'PostIssue', 'My Events', 'Notifications', 'Explore Service Enterprises'];
 
   const sectionIcons = {
     'Created Issues': <ClipboardList size={18} />, 
@@ -20,7 +20,8 @@ export default function UDashBoard() {
     'Donations': <Heart size={18} />, 
     'PostIssue': <PlusCircle size={18} />,
     'My Events': <Calendar size={18} />,
-    'Notifications': <Bell size={18} />
+    'Notifications': <Bell size={18} />,
+    'Explore Service Enterprises': <Building2 size={18} />
   };
 
   const handleLogout = () => {
@@ -36,6 +37,8 @@ export default function UDashBoard() {
       slug = 'my-events';
     } else if (section === 'Notifications') {
       slug = 'notifications';
+    } else if (section === 'Explore Service Enterprises') {
+      slug = 'service-enterprises';
     } else {
       slug = section.toLowerCase().replace(/\s+/g, '-');
     }
@@ -72,6 +75,8 @@ export default function UDashBoard() {
                 slug = 'my-events';
               } else if (sec === 'Notifications') {
                 slug = 'notifications';
+              } else if (sec === 'Explore Service Enterprises') {
+                slug = 'service-enterprises';
               } else {
                 slug = sec.toLowerCase().replace(/\s+/g, '-');
               }
