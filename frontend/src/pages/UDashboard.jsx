@@ -54,11 +54,11 @@ export default function UDashBoard() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-blue-700 to-blue-900 text-white p-6 flex flex-col transform transition-transform duration-300 ease-in-out z-40 ${
+        className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-blue-700 to-blue-900 text-white p-1 flex flex-col transform transition-transform duration-300 ease-in-out z-40 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center mb-8 pl-10">
+        <div className="flex items-center mb-8 pl-20 mt-4">
           <h2 className="text-2xl font-bold">Civik Link</h2>
         </div>
         <nav className="flex-1">
@@ -103,10 +103,8 @@ export default function UDashBoard() {
       </aside>
 
       {/* Main content area for nested pages */}
-      <main className={`flex-1 bg-gray-100 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
+      <main className={`flex-1 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome to Civik Link!</h1>
-          <p className="text-gray-600 mt-2">Your one-stop platform to raise issues, volunteer for causes, and make a difference in your neighborhood.</p>
         </div>
 
         <Outlet />

@@ -12,7 +12,6 @@ const NGODashboard = () => {
   const location = useLocation();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
-  // Handle redirection on page refresh
   useEffect(() => {
     // Only redirect if we're not already on the main dashboard
     if (location.pathname === '/ngo-dashboard') {
@@ -105,7 +104,7 @@ const NGODashboard = () => {
       </aside>
 
       {/* Main content */}
-      <main className={`flex-1 bg-gray-100 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
+      <main className={`flex-1 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
         <div className="mt-12">
           <Outlet />
         </div>

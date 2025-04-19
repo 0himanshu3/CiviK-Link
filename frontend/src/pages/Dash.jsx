@@ -63,11 +63,6 @@ export default function Dash() {
 
       {/* Main content area for nested pages */}
       <main className="flex-1 bg-gray-100 p-6 ml-0 md:ml-64 overflow-y-auto">
-  <div className="mb-6">
-    <h1 className="text-3xl font-bold text-gray-800">Welcome to Neighbour Net!</h1>
-    <p className="text-gray-600 mt-2">Your one-stop platform to raise issues, volunteer for causes, and make a difference in your neighborhood.</p>
-  </div>
-
   {/* Main content placeholder */}
   <h1 className="text-3xl font-semibold text-gray-700">Welcome, {user?.name || 'User'}!</h1>
   <Outlet />

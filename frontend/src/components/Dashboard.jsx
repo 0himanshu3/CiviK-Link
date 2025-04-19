@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { FaSearch, FaMapMarkerAlt, FaTag, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
 export default function Dashboard() {
   const [issues, setIssues] = useState([]);
@@ -131,124 +132,143 @@ export default function Dashboard() {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">All Issues</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10 px-2 md:px-6">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold mb-8 text-blue-800 tracking-tight">All Issues</h2>
 
-      {/* Filters */}
-      <div className="mb-6 bg-gray-100 p-4 rounded-md shadow-sm">
-        <input
-          type="text"
-          placeholder="Search by name"
-          className="p-2 border rounded w-full mb-4"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <div className="flex flex-wrap gap-4">
-          {/* Location Dropdown */}
-          <select
-            className="p-2 border rounded"
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
-          >
-            <option value="">All Locations</option>
-            {allLocations.map((loc) => (
-              <option key={loc} value={loc}>{loc}</option>
-            ))}
-          </select>
-
-          {/* Tag Checkboxes */}
-          <div className="flex flex-wrap gap-2 items-center">
+        {/* Filters */}
+        <div className="mb-8 bg-white p-6 rounded-2xl shadow flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4 md:items-center">
+            <div className="relative w-full md:w-1/2">
+              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by issue title"
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <select
+              className="p-2 border border-gray-200 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+            >
+              <option value="">All Locations</option>
+              {allLocations.map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-wrap gap-3 items-center">
+            <span className="text-gray-600 flex items-center gap-1">
+              <FaTag className="text-blue-400" /> Tags:
+            </span>
             {allTags.map((tag) => (
-              <label key={tag} className="flex items-center space-x-1">
+              <label key={tag} className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedTags.includes(tag)}
                   onChange={() => handleTagChange(tag)}
+                  className="accent-blue-600"
                 />
-                <span className="text-sm">{tag}</span>
+                <span className="text-sm text-blue-700">{tag}</span>
               </label>
             ))}
           </div>
         </div>
-      </div>
 
-      {loading && <p>Loading issues...</p>}
-      {error && <p className="text-red-600">{error}</p>}
-      {!loading && !error && filteredIssues.length === 0 && (
-        <p className="text-gray-600">No matching issues found.</p>
-      )}
+        {loading && (
+          <div className="flex items-center gap-2 text-blue-500 text-lg animate-pulse">
+            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            Loading issues...
+          </div>
+        )}
+        {error && <p className="text-red-600 font-semibold">{error}</p>}
+        {!loading && !error && filteredIssues.length === 0 && (
+          <div className="text-gray-500 text-lg flex items-center gap-2 mt-12">
+            No matching issues found.
+          </div>
+        )}
 
-      {!loading && !error && filteredIssues.length > 0 && (
-        <div className="space-y-4">
-          {filteredIssues.map((issue) => (
-            <div
-              key={issue._id}
-              className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-col"
-            >
-              <h3 className="text-xl font-bold mb-2 text-blue-800">{issue.title}</h3>
-
-              {issue.tags && issue.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {issue.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
+        {!loading && !error && filteredIssues.length > 0 && (
+          <div className="grid gap-8 mt-2">
+            {filteredIssues.map((issue) => (
               <div
-                className="text-gray-700 flex-1 mb-2"
-                dangerouslySetInnerHTML={{
-                  __html: issue.content
-                    ? issue.content.length > 100
-                      ? issue.content.substring(0, 100) + '...'
-                      : issue.content
-                    : 'No description',
-                }}
-              />
-
-              <p className="text-sm text-gray-500 mb-2">
-                <strong>Location:</strong> {issue.issueLocation}
-              </p>
-
-              {user?.role === 'User' && (
-                <div className="flex items-center gap-4 mb-2">
-                  <button
-                    onClick={() => handleUpvote(issue._id)}
-                    className={`px-3 py-1 rounded text-white font-semibold ${issue.upvoters.includes(user._id)
-                      ? 'bg-green-600'
-                      : 'bg-gray-500'
-                      }`}
-                  >
-                    👍 {issue.upvoters.length}
-                  </button>
-                  <button
-                    onClick={() => handleDownvote(issue._id)}
-                    className={`px-3 py-1 rounded text-white font-semibold ${issue.downvoters.includes(user._id)
-                      ? 'bg-red-600'
-                      : 'bg-gray-500'
-                      }`}
-                  >
-                    👎 {issue.downvoters.length}
-                  </button>
-                </div>
-              )}
-
-              <button
-                onClick={() => navigate(`/issues/${issue._id}`)}
-                className="mt-4 inline-block text-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                key={issue._id}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-200 p-6 border-l-4 border-blue-200 group flex flex-col"
               >
-                View Details
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <h3 className="text-2xl font-bold text-blue-800 group-hover:underline transition">{issue.title}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {issue.tags && issue.tags.length > 0 && issue.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  className="text-gray-700 mt-2 text-base"
+                  dangerouslySetInnerHTML={{
+                    __html: issue.content
+                      ? issue.content.length > 100
+                        ? issue.content.substring(0, 100) + '...'
+                        : issue.content
+                      : 'No description',
+                  }}
+                />
+
+                <div className="flex items-center gap-2 text-gray-500 text-sm mt-3">
+                  <FaMapMarkerAlt className="text-blue-400" />
+                  <span>
+                    <strong className="text-gray-700">Location:</strong> {issue.issueLocation}
+                  </span>
+                </div>
+
+                {user?.role === 'User' && (
+                  <div className="flex items-center gap-4 mt-4">
+                    <button
+                      onClick={() => handleUpvote(issue._id)}
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
+                        ${issue.upvoters.includes(user._id)
+                          ? 'bg-green-600'
+                          : 'bg-gray-400 hover:bg-green-500'
+                        }`}
+                    >
+                      <FaThumbsUp /> {issue.upvoters.length}
+                    </button>
+                    <button
+                      onClick={() => handleDownvote(issue._id)}
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
+                        ${issue.downvoters.includes(user._id)
+                          ? 'bg-red-600'
+                          : 'bg-gray-400 hover:bg-red-500'
+                        }`}
+                    >
+                      <FaThumbsDown /> {issue.downvoters.length}
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => navigate(`/issues/${issue._id}`)}
+                  className="mt-6 w-max text-white bg-gradient-to-r from-blue-500 to-blue-700 px-6 py-2 rounded-full shadow hover:from-blue-600 hover:to-blue-800 transition font-semibold"
+                >
+                  View Details
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
