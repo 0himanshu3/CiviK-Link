@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { User } from '../models/user.model.js';
 dotenv.config({ path: './config/.env' });
 
 export const login = async (req, res) => {
@@ -93,7 +94,44 @@ export const register = async (req, res) => {
                 message: "Registration with admin email is not allowed."
             });
         }
-        // ... existing registration logic ...
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User already exists"
+            });
+        }
+
+        const userData = {
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            location: req.body.location,
+            role: req.body.role
+        };
+
+        if (req.body.role === 'NGO' && req.body.interests) {
+            userData.interests = JSON.parse(req.body.interests);
+        }
+
+        const user = await User.create(userData);
+        const verificationCode = user.generateVerificationCode();
+        await user.save();
+
+        // Send verification email with the code
+        // ... existing email sending logic ...
+
+        res.status(201).json({
+            success: true,
+            message: "Registration successful. Please verify your email.",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error("Registration error:", error);
         return res.status(500).json({

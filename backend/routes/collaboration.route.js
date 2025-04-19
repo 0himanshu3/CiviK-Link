@@ -3,7 +3,8 @@ import { isAuthenticated } from '../middlewares/auth.middleware.js';
 import {
     sendCollaborationRequest,
     getCollaborationRequests,
-    respondToRequest
+    respondToRequest,
+    getPotentialCollaborators
 } from '../controllers/collaboration.controller.js';
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.get('/requests', getCollaborationRequests);
 
 // Respond to collaboration request
 router.patch('/request/:requestId/respond', respondToRequest);
+
+// Get potential collaborators based on interests
+router.get('/potential/:issueId', getPotentialCollaborators);
 
 export default router; 

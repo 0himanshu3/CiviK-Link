@@ -2,6 +2,8 @@ import mongoose from "mongoose"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
 
+const issueTags = ["Road", "Water", "Electricity", "Education", "Health", "Sanitation"];
+
 const userSchema= new mongoose.Schema({
     name:{
         type: String,
@@ -21,6 +23,11 @@ const userSchema= new mongoose.Schema({
         enum: ["Admin", "NGO", "User"],
         required:true,
         default: "User",
+      },
+      interests: {
+        type: [String],
+        enum: issueTags,
+        default: [],
       },
       accountVerified:{
         type:Boolean,

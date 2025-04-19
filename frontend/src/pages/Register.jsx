@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import LocationPicker from "../components/LocationPicker";
 import { Eye, EyeOff } from 'lucide-react';
 
+const issueTags = ["Road", "Water", "Electricity", "Education", "Health", "Sanitation"];
+
 function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -13,6 +15,7 @@ function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [location, setLocation] = useState('');
     const [role, setRole] = useState('');
+    const [interests, setInterests] = useState([]);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -21,6 +24,9 @@ function Register() {
     const handleRegister = (e) => {
         e.preventDefault();
         if (!location) return toast.error("Please select your location");
+        if (role === 'NGO' && interests.length === 0) {
+            return toast.error("Please select at least one interest");
+        }
 
         const formData = new FormData();
         formData.append('name', name);
@@ -28,8 +34,24 @@ function Register() {
         formData.append('password', password);
         formData.append('location', location);
         formData.append('role', role);
+        if (role === 'NGO') {
+            // Append each interest separately
+            interests.forEach(interest => {
+                formData.append('interests[]', interest);
+            });
+        }
 
         dispatch(register(formData));
+    };
+
+    const handleInterestChange = (tag) => {
+        setInterests(prev => {
+            if (prev.includes(tag)) {
+                return prev.filter(t => t !== tag);
+            } else {
+                return [...prev, tag];
+            }
+        });
     };
 
     useEffect(() => {
@@ -100,6 +122,25 @@ function Register() {
                     <option value="NGO">NGO</option>
                     <option value="User">User</option>
                 </select>
+
+                {role === 'NGO' && (
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Interests</label>
+                        <div className="flex flex-wrap gap-2">
+                            {issueTags.map((tag) => (
+                                <label key={tag} className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={interests.includes(tag)}
+                                        onChange={() => handleInterestChange(tag)}
+                                        className="rounded border-gray-300"
+                                    />
+                                    <span>{tag}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <button
                     type="submit"
