@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
-import { Menu, X, Home, ClipboardList, MessageSquare, CheckCircle, Heart, LogOut, Calendar, PlusCircle } from 'lucide-react';
+import { Menu, X, Home,Users, ClipboardList, MessageSquare, CheckCircle, Heart, LogOut, Calendar, PlusCircle } from 'lucide-react';
 import { FaTrophy } from 'react-icons/fa';
 import NGODashh from './NGODashh';
 
@@ -24,6 +24,7 @@ const NGODashboard = () => {
   const sections = [
     { name: 'Dashboard', icon: <Home size={18} />, path: '' },
     { name: 'Requests', icon: <ClipboardList size={18} />, path: 'requests' },
+    { name: 'Collaboration Requests', icon: <Users size={18} />, path: 'collaboration-requests' },
     { name: 'Query Section', icon: <MessageSquare size={18} />, path: 'query-section' },
     { name: 'Claimed Issues', icon: <CheckCircle size={18} />, path: 'claimed-issues' },
     { name: 'Donations', icon: <Heart size={18} />, path: 'donations' },
@@ -64,7 +65,7 @@ const NGODashboard = () => {
         }`}
       >
         <div className="flex items-center mb-8 pl-10">
-          <h2 className="text-2xl font-bold">Civik-Link</h2>
+          <h2 className="text-2xl font-bold">Civik Link</h2>
         </div>
         
         <nav className="flex-1 overflow-y-auto">
