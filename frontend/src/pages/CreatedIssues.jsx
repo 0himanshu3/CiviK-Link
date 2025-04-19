@@ -49,7 +49,7 @@ export default function CreatedIssues() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10 px-2 md:px-6">
+    <div className="min-h-screen px-4 md:px-6">
       <div className="max-w-5xl w-full mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-blue-800 tracking-tight flex items-center gap-3">
           <FaInfoCircle className="text-blue-400" /> Your Created Issues

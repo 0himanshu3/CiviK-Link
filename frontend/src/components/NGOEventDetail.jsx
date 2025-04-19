@@ -268,7 +268,6 @@ export default function NGOEventDetail({ event: initialEvent }) {
                         {/* Volunteer List */}
                         {position.registeredVolunteers && position.registeredVolunteers.length > 0 ? (
                           <div className="space-y-3">
-                            <h3 className="font-medium text-gray-700 border-b pb-2">Registered Volunteers</h3>
                             
                             {position.registeredVolunteers.map((volunteer, vIdx) => (
                               <div key={volunteer._id || `vol-${vIdx}`} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
@@ -315,7 +314,7 @@ export default function NGOEventDetail({ event: initialEvent }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex justify-between gap-3 mb-8">
           <Link 
             to="/ngo-dashboard/created-events"
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-5 py-2 rounded-lg shadow"

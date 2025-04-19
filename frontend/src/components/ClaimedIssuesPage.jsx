@@ -63,16 +63,16 @@ export default function ClaimedIssuesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="mb-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Claimed Issues</h1>
           <p className="text-gray-600">Track and manage your claimed community issues</p>
         </div>
 
         {/* Filters and Search Section */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-lg shadow-sm">
+        <div className="mb-2 flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-lg shadow-sm">
           <div className="relative flex-1">
             <input
               type="text"

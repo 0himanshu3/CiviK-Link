@@ -64,7 +64,6 @@ const App = () => {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
         
-        {/* Event Routes */}
         <Route path="/events" element={<Events />} />
         <Route path="/events/:id" element={<EventDetailsWrapper />} />
         
@@ -75,7 +74,6 @@ const App = () => {
           <Route path="donations" element={<Donations />} />
           <Route path="postissue" element={<PostIssue />} />
           <Route path="notifications" element={<Notifications />} />
-          {/* User Event Routes */}
           <Route path="my-events" element={<RegisteredEvents />} />
         </Route>
 
@@ -85,7 +83,6 @@ const App = () => {
           <Route path="collaboration-requests" element={<CollaborationRequestsPage />} />
           <Route path="claimed-issues" element={<ClaimedIssuesPage />} />
           <Route path="donations" element={<NGODonations />} />
-          {/* NGO Event Routes */}
           <Route path="create-event" element={<CreateEvent />} />
           <Route path="created-events" element={<CreatedEvents />} />
           <Route path="events/:id/edit" element={<CreateEvent />} />

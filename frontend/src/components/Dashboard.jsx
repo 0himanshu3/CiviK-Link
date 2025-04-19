@@ -19,6 +19,13 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const [currentPage, setCurrentPage] = useState(1);
+  const issuesPerPage = 5;
+  const totalPages = Math.ceil(filteredIssues.length / issuesPerPage);
+  const paginatedIssues = filteredIssues.slice(
+    (currentPage - 1) * issuesPerPage,
+    currentPage * issuesPerPage
+  )
 
   useEffect(() => {
     const fetchIssues = async () => {
@@ -132,10 +139,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10 px-2 md:px-6">
+    <div className="min-h-screen py-6 px-2 md:px-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold mb-8 text-blue-800 tracking-tight">All Issues</h2>
-
+        <h2 className="text-4xl font-bold mb-2 text-blue-800 tracking-tight">All Issues</h2>
+  
         {/* Filters */}
         <div className="mb-8 bg-white p-6 rounded-2xl shadow flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4 md:items-center">
@@ -177,7 +184,7 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-
+  
         {loading && (
           <div className="flex items-center gap-2 text-blue-500 text-lg animate-pulse">
             <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -193,82 +200,116 @@ export default function Dashboard() {
             No matching issues found.
           </div>
         )}
-
+  
         {!loading && !error && filteredIssues.length > 0 && (
-          <div className="grid gap-8 mt-2">
-            {filteredIssues.map((issue) => (
-              <div
-                key={issue._id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-200 p-6 border-l-4 border-blue-200 group flex flex-col"
+          <>
+            <div className="grid gap-8 mt-2">
+              {filteredIssues
+                .slice((currentPage - 1) * issuesPerPage, currentPage * issuesPerPage)
+                .map((issue) => (
+                  <div
+                    key={issue._id}
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-200 p-6 border-l-4 border-blue-200 group relative flex flex-col"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-2xl font-bold text-blue-800 group-hover:underline transition">
+                        {issue.title}
+                      </h3>
+                      <div className="flex flex-col items-end gap-1 max-w-[60%]">
+                        <div className="flex flex-wrap justify-end gap-1">
+                          {issue.tags && issue.tags.length > 0 && issue.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                          <FaMapMarkerAlt className="text-blue-400" />
+                          <span>{issue.issueLocation}</span>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div
+                      className="text-gray-700 mt-2 text-base"
+                      dangerouslySetInnerHTML={{
+                        __html: issue.content
+                          ? issue.content.length > 100
+                            ? issue.content.substring(0, 100) + '...'
+                            : issue.content
+                          : 'No description',
+                      }}
+                    />
+  
+                    {user?.role === 'User' && (
+                      <div className="flex items-center gap-4 mt-4">
+                        <button
+                          onClick={() => handleUpvote(issue._id)}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
+                            ${issue.upvoters.includes(user._id)
+                              ? 'bg-green-600'
+                              : 'bg-gray-400 hover:bg-green-500'
+                            }`}
+                        >
+                          <FaThumbsUp /> {issue.upvoters.length}
+                        </button>
+                        <button
+                          onClick={() => handleDownvote(issue._id)}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
+                            ${issue.downvoters.includes(user._id)
+                              ? 'bg-red-600'
+                              : 'bg-gray-400 hover:bg-red-500'
+                            }`}
+                        >
+                          <FaThumbsDown /> {issue.downvoters.length}
+                        </button>
+                      </div>
+                    )}
+  
+                    <button
+                      onClick={() => navigate(`/issues/${issue._id}`)}
+                      className="mt-6 w-max text-white bg-gradient-to-r from-blue-500 to-blue-700 px-6 py-2 rounded-full shadow hover:from-blue-600 hover:to-blue-800 transition font-semibold"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                ))}
+            </div>
+  
+            <div className="flex justify-center mt-8 gap-4">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg text-white font-semibold transition ${
+                  currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                  <h3 className="text-2xl font-bold text-blue-800 group-hover:underline transition">{issue.title}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {issue.tags && issue.tags.length > 0 && issue.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="text-gray-700 mt-2 text-base"
-                  dangerouslySetInnerHTML={{
-                    __html: issue.content
-                      ? issue.content.length > 100
-                        ? issue.content.substring(0, 100) + '...'
-                        : issue.content
-                      : 'No description',
-                  }}
-                />
-
-                <div className="flex items-center gap-2 text-gray-500 text-sm mt-3">
-                  <FaMapMarkerAlt className="text-blue-400" />
-                  <span>
-                    <strong className="text-gray-700">Location:</strong> {issue.issueLocation}
-                  </span>
-                </div>
-
-                {user?.role === 'User' && (
-                  <div className="flex items-center gap-4 mt-4">
-                    <button
-                      onClick={() => handleUpvote(issue._id)}
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
-                        ${issue.upvoters.includes(user._id)
-                          ? 'bg-green-600'
-                          : 'bg-gray-400 hover:bg-green-500'
-                        }`}
-                    >
-                      <FaThumbsUp /> {issue.upvoters.length}
-                    </button>
-                    <button
-                      onClick={() => handleDownvote(issue._id)}
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-white font-semibold transition
-                        ${issue.downvoters.includes(user._id)
-                          ? 'bg-red-600'
-                          : 'bg-gray-400 hover:bg-red-500'
-                        }`}
-                    >
-                      <FaThumbsDown /> {issue.downvoters.length}
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => navigate(`/issues/${issue._id}`)}
-                  className="mt-6 w-max text-white bg-gradient-to-r from-blue-500 to-blue-700 px-6 py-2 rounded-full shadow hover:from-blue-600 hover:to-blue-800 transition font-semibold"
-                >
-                  View Details
-                </button>
-              </div>
-            ))}
-          </div>
+                Previous
+              </button>
+              <span className="px-4 py-2 font-semibold text-blue-800">
+                Page {currentPage} of {Math.ceil(filteredIssues.length / issuesPerPage)}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, Math.ceil(filteredIssues.length / issuesPerPage)))}
+                disabled={currentPage === Math.ceil(filteredIssues.length / issuesPerPage)}
+                className={`px-4 py-2 rounded-lg text-white font-semibold transition ${
+                  currentPage === Math.ceil(filteredIssues.length / issuesPerPage)
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
   );
+  
+  
+  
 }

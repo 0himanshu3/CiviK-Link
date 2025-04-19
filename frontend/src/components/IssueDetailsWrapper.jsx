@@ -24,7 +24,7 @@ export default function IssueDetailsWrapper() {
         setLoading(false);
       }
     };
-  
+
     fetchIssue();
   }, [id]);
 
