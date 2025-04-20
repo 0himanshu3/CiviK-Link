@@ -6,19 +6,41 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+
+# Environment variables
 .env
-node_modules
-dist
-dist-ssr
+.env.* 
+
+# Dependency directories
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+build/
+.out/
+
+# Vite / Next.js
+.vite/
+.next/
+.vercel/
+
+# Local development
 *.local
 
-# Editor directories and files
-.vscode/*
+# IDE/editor configs
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+
+# Mac system files
+.DS_Store
+
+# Optional: OS-specific files
+Thumbs.db
