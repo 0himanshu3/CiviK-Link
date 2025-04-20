@@ -1,3 +1,4 @@
+[![Badge Name](https://i.postimg.cc/FFwvfkGk/built-at-hack36.png)](https://www.hack36.in)
 
 # 🌐 Civik Link
 
@@ -20,3 +21,7 @@ Team Name: HackHop
   - [Himanshu Kumar](https://github.com/0himanshu3)
   - [Debopriyo Sen](https://github.com/duke107)
   - [Satyam Jha](https://github.com/Stardust369)
+
+Made at:
+[![Badge Name](https://i.postimg.cc/FFwvfkGk/built-at-hack36.png)](https://www.hack36.in)
+
